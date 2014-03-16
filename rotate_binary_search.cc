@@ -102,7 +102,8 @@ int findRotateSortPivot(int (&RSArray)[N]) {
 template<int N, class Pred>
 int binarySearch(int (&a)[N], int lo, int hi, const int x, const Pred& cmp){
   while (lo <= hi) {
-    int mid = lo + (hi - lo)/2;
+    //int mid = lo + (hi - lo)/2;
+    int mid = lo + ((hi - lo)>>1);
     if (a[mid] == x) {
       return mid;
     }
@@ -123,8 +124,14 @@ int binarySearch(int (&a)[N], int lo, int hi, const int x, const Pred& cmp){
  * @return 
  */
 template<int N>
-int findInIncreasingDecresingSeq(int (&a)[N],const int l, const int h, const int x) {
+int findInIncreasingDecresingSeq(int (&a)[N],/*const*/ int l, /*const*/ int h, const int x) {
   //http://stackoverflow.com/questions/19372930/given-a-bitonic-array-and-element-x-in-the-array-find-the-index-of-x-in-2logn
+  //below code complexity is O(nlogn)
+  
+  //O(logn) algorithm works as:
+  //find the maxium number in bitonic logn(findMaxIndexInBitonic)
+  //binary search the left & right part 2logn(binarySearch)
+  //http://www.careercup.com/question?id=13579663
   while (l <= h) {
     int mid = l + (h - l)/2;
     if (x == a[mid])
@@ -142,9 +149,13 @@ int findInIncreasingDecresingSeq(int (&a)[N],const int l, const int h, const int
 #endif
       //http://stackoverflow.com/questions/279854/how-do-i-sort-a-vector-of-pairs-based-on-the-second-element-of-the-pair
       int found = binarySearch(a, l, mid - 1, x, std::less<int>() );//binarySearchAscending(a, l, mid - 1, x);
-      if (found != -1)
+      if (found != -1) {
         return found;
-      return findInIncreasingDecresingSeq(a, mid + 1, h, x);
+      }
+      //return findInIncreasingDecresingSeq(a, mid + 1, h, x);
+      else {
+        l = mid + 1;
+      }
     }
     else if ((mid == 0 || a[mid - 1] > a[mid]) && (mid == N - 1 || a[mid] > a[mid+1]) ) {
 #if 0
@@ -156,9 +167,11 @@ int findInIncreasingDecresingSeq(int (&a)[N],const int l, const int h, const int
       }
 #endif
       int found = binarySearch(a, mid + 1, h, x, std::greater<int>() );//binarySearchDescending(a, mid + 1, h, x);
-      if (found != -1)
+      if (found != -1) {
        return found;
-      return findInIncreasingDecresingSeq(a, l, mid - 1, x); 
+      }
+      //return findInIncreasingDecresingSeq(a, l, mid - 1, x); 
+      h = mid - 1;
     }
     else {
       // in turning point
@@ -216,3 +229,8 @@ int main(int /*argc*/, char */*argv*/[]) {
   printf("6's index in array5: %d\n", findInIncreasingDecresingSeq(array5, 0, sizeof(array5)/sizeof(array[0])-1, 6) );
   return 0;
 }
+
+
+//other bitonic problem to lookup:
+//determine if bitonic sequence(http://stackoverflow.com/questions/3029024/bitonic-sequence)
+//longest bitonic sequece(http://www.geeksforgeeks.org/dynamic-programming-set-15-longest-bitonic-subsequence/)
