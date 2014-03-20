@@ -39,7 +39,7 @@ void quickSelect(T (&arr)[N], int left, int right, int k, std::vector<T>& kthVec
 
 //http://en.wikipedia.org/wiki/Selection_algorithm#Linear_general_selection_algorithm_-_Median_of_Medians_algorithm
 template<typename T, typename Comp, int N>
-void BFPRTSelect(T (&arr)[N], int k, std::vector<T>& kthVec) { // median of median
+void BFPRTSelect(T (&arr)[N], int k, std::vector<T>& kthVec) {
   if (k > N) {
     assert(false && "no enough k element to select");
     return;
