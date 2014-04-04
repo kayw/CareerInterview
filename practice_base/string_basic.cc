@@ -1,4 +1,5 @@
 #include <stdio.h>
+//http://stackoverflow.com/questions/12136329/how-does-strcmp-work
 int strcmp(const char* pStr1, const char* pStr2) {
   if (!pStr1 && !pStr2) {
     return 0;

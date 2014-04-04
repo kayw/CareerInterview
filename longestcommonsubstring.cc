@@ -1,3 +1,4 @@
+//http://en.wikibooks.org/wiki/Algorithm_Implementation/Strings/Longest_common_substring
 #include <iostream>
 #include <string.h>
 #include <string>
@@ -50,9 +51,9 @@ int RetrieveLongestCommonsSubstring(const std::string& str1, const std::string& 
   return maxSubLen;
 }
 
-int main(int /*argc*/, char */*argv*/[])
-{
-  std::string str1 = "abcdefghijk";
+int main(int /*argc*/, char */*argv*/[]) {
+  //wrong common string
+  std::string str1 = "zabcdefghijk";
   std::string str2 = "lmnopabcdrst";
   std::string commonStr;
   int maxCommLen = RetrieveLongestCommonsSubstring(str1, str2, commonStr);
