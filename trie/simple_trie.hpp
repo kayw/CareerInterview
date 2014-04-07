@@ -282,7 +282,7 @@ class Node {
                     const NodeItemKlass& item = *(const NodeItemKlass *)(*currentPos_);
                     keyStack_.push_back(item.get());
                     keyValuePair_.first = &(keyStack_[0]);
-                    keyValuePair_.second = &(((const EndNodeItemKlass &)item).getValue());
+                    keyValuePair_.second = &((static_cast<const EndNodeItemKlass &>(item) ).getValue());
                     checkLeft_ = true;
                     return;
                 } else {
@@ -355,7 +355,7 @@ class Node {
                   const NodeItemKlass& item = *(const NodeItemKlass*) *currentPos_;
                   keyStack_.push_back(item.get() );
                   keyValuePair_.first = &(keyStack_[0]);
-                  keyValuePair_.second = &(((const EndNodeItemKlass&)item).getValue());
+                  keyValuePair_.second = &((static_cast<const EndNodeItemKlass&>(item) ).getValue());
                   checkLeft_ = true;
                   return;
                 }
@@ -473,7 +473,7 @@ class Node {
         if (!itemPtr) {
           break;
         } else if (key[i] == endSymbol_) {
-          ((EndNodeItemKlass*)itemPtr)->set(key[i], val);
+          (static_cast<EndNodeItemKlass*>(itemPtr) )->set(key[i], val);
           rv.first = Iterator(nodePtr, this, key);
           rv.second = true;
           ++size_;
@@ -511,7 +511,7 @@ class Node {
       NodeKlass* nodePtr = nodeWithKey(key);
       if (nodePtr) {
         NodeItemKlass* itemPtr = nodePtr->items_.getItem(endSymbol_);
-        return &((EndNodeItemKlass*)itemPtr)->getValue();
+        return &(static_cast<EndNodeItemKlass*>(itemPtr) )->getValue();
       }
       return nullptr;
     }
@@ -754,7 +754,7 @@ class SetItems {
 
     NodeItemKlass* createNodeItem(const T& key) {
       if (key == endSymbol_) {
-        return new NodeItemKlass(endSymbol_, key);
+        return new EndNodeItemKlass(endSymbol_, key);
       }
       else {
         return new NodeItemKlass(endSymbol_, key);

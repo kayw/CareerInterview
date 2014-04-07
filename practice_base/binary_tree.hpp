@@ -89,7 +89,7 @@ class BSTree {
       //http://leetcode.com/2010/09/printing-binary-tree-in-level-order.html
       int h = maxHeight();
       int nodesInThisLevel = 1;
-      int indentSpace = 2;//indentSpace of 0 means the lowest level of the left node will stick to the left margin
+      int indentSpace = 0//2;//indentSpace of 0 means the lowest level of the left node will stick to the left margin
       int branchLen = (int)pow(2.0, h+1) - 2;//the length of branch for each node of each level
       int nodeSpaceLen = 2 + (int)pow(2.0, h+1);//distance between left neighbor node's right arm and right neighbor node's left arm
       int startLen = branchLen + indentSpace + 2;// starting space to the first node to print of each level (for the left most node of each level only)

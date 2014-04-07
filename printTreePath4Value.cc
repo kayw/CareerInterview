@@ -1,5 +1,7 @@
 #include "practice_base/binary_tree.hpp"
 
+#include <math.h>
+
 #define MAX_TREE_HEIGHT 20
 
 void printTreePathHelper(BSTreeNode<int>& root, int& sum, int (&path)[MAX_TREE_HEIGHT], int top) {
