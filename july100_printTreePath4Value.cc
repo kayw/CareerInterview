@@ -9,8 +9,8 @@ void printTreePathHelper(BSTreeNode<int>& root, int& sum, int (&path)[MAX_TREE_H
   sum -= root.value_;
   if (root.pLeftNode_ == nullptr && root.pRightNode_ == nullptr) {
     if (sum == 0) {
-      for(int i = 0; i < MAX_TREE_HEIGHT; ++i)
-        std::cout << path[i];
+      for(int i = 0; i < top; ++i)
+        std::cout << path[i] << " ";
     }
   }
   else {
@@ -37,19 +37,16 @@ int main(int /*argc*/, char */*argv*/[]) {
   int sum = tree.getRootNode()->value_;
   BSTreeNode<int>* pNode = tree.getRootNode();
   for (; ;) { 
-    if (pNode != nullptr && pNode->pLeftNode_ != nullptr) { 
+    if (pNode->pLeftNode_ == nullptr && pNode->pRightNode_ == nullptr) {
+      break;
+    }
+    if (pNode->pLeftNode_ != nullptr) { 
      sum += pNode->pLeftNode_->value_;
      pNode = pNode->pLeftNode_;
     }
-    else {
-      break;
-    }
-    if (pNode != nullptr && pNode->pRightNode_ != nullptr) {
+    if (pNode->pRightNode_ != nullptr) {
       sum += pNode->pRightNode_->value_;
       pNode = pNode->pRightNode_;
-    }
-    else {
-      break;
     }
   }
   printTreePath(*tree.getRootNode(), sum);

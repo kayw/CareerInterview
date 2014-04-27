@@ -12,6 +12,7 @@ int calcMaxSubSum(int (&a)[N]) {
       maxsofar = maxcurr;
     }
   }
+  //TODO:http://bbs.csdn.net/topics/350187239#post-360546349
   return maxsofar;
 }
 

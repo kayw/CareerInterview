@@ -88,3 +88,5 @@ int main(int /*argc*/, char */*argv*/[]) {
 }
 
 //http://www.cnblogs.com/ider/p/longest-common-substring-problem-optimization.html
+//
+//TODO O(nlogn) optimization method

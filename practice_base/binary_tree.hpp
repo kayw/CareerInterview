@@ -2,11 +2,13 @@
 #define BINARY_TREE_HPP_8906E665_F096_45BF_A214_DD59CAB96982
 
 #include <iostream>
+#include <sstream>
 #include <iomanip> // std::setw
 #include <algorithm>
 #include <queue>
 #include <deque>
 #include <random>
+#include <memory>
 #include <assert.h>
 template<typename T> struct ValuePrinter {};
 template<> struct ValuePrinter<int> {
@@ -19,11 +21,18 @@ template<> struct ValuePrinter<int> {
       dividend = dividend/10;
       output += char('0'+remain);
     }while(dividend != 0);
-    output += '\0';
     std::reverse(output.begin(), output.end());
+    output += '\0';
     return output;
   }
 };
+// Convert an integer value to string
+std::string intToString(int val) {
+  std::ostringstream ss;
+  ss << val;
+  std::string ssStr = ss.str();
+  return ss.str();
+}
 template<typename T>
 struct BSTreeNode {
   T value_;
@@ -41,8 +50,14 @@ class BSTree {
       destructorHelper(pRoot_);
     }
 
-    BSTreeNode<T>** getRootPtr() {
-      return &pRoot_;
+    //BSTreeNode<T>** getRootPtr() {
+    //  return &pRoot_;
+    //}
+    std::unique_ptr<BSTreeNode<T>> clone(std::unique_ptr<BSTreeNode<T>> refRootPtr) {
+      BSTreeNode<T>* refRootRawPtr = refRootPtr.get();
+      cloneNode(refRootRawPtr, pRoot_);
+      //refRootPtr.reset(refRootRawPtr);
+      return refRootPtr;
     }
     BSTreeNode<T>* getRootNode() const {
       return pRoot_;
@@ -90,7 +105,7 @@ class BSTree {
       int h = maxHeight();
       int nodesInThisLevel = 1;
       int indentSpace = 0;//2;//indentSpace of 0 means the lowest level of the left node will stick to the left margin
-      int branchLen = (int)pow(2.0, h+1) - 2;//the length of branch for each node of each level
+      int branchLen = (int)pow(2.0, h) - 2;//the length of branch for each node of each level
       int nodeSpaceLen = 2 + (int)pow(2.0, h+1);//distance between left neighbor node's right arm and right neighbor node's left arm
       int startLen = branchLen + indentSpace + 2;// starting space to the first node to print of each level (for the left most node of each level only)
       std::deque<BSTreeNode<T>*> nodeQ;
@@ -133,6 +148,29 @@ class BSTree {
       createTreeHelper(ppTreeNode->pRightNode_, vals, mid+1, end);
     }
 
+    void cloneNode(BSTreeNode<T>*& destPtr, const BSTreeNode<T>* srcPtr) {
+      if (!srcPtr) {
+        destPtr = nullptr;
+      }
+      destPtr->value_ = srcPtr->value_;
+      if (srcPtr->pLeftNode_) {
+        destPtr->pLeftNode_ = new BSTreeNode<T>();
+        //destPtr->pLeftNode_->value_ = srcPtr->pLeftNode_->value_;
+#if 0
+        //tmp call destructor delete the pointer content of destPtr->pLeftNode_
+        std::unique_ptr<BSTreeNode<T>> tmp = cloneNode(std::move(std::unique_ptr<BSTreeNode<T>>(destPtr->pLeftNode_)), srcPtr->pLeftNode_);
+        destPtr->pLeftNode_ = tmp.get();
+#endif
+        cloneNode(destPtr->pLeftNode_, srcPtr->pLeftNode_);
+      }
+
+      if (srcPtr->pRightNode_) {
+        destPtr->pRightNode_ = new BSTreeNode<T>();
+        //destPtr->pRightNode_->value_ = srcPtr->pRightNode_->value_;
+        cloneNode(destPtr->pRightNode_, srcPtr->pRightNode_);
+      }
+      //return destPtr;
+    }
     // Print the arm branches (eg, /    \ ) on a line
     void printBranches(int nodesInThisLevel, int branchLen, int nodeSpaceLen, int startLen, const std::deque<BSTreeNode<T>*>& nodesQueue) const {
       typename std::deque<BSTreeNode<T>*>::const_iterator iter = nodesQueue.begin();
@@ -148,7 +186,8 @@ class BSTree {
       typename std::deque<BSTreeNode<T>*>::const_iterator iter = nodesQueue.begin();
       for (int i = 0; i < nodesInThisLevel; i++, iter++) {
         std::cout << ((i == 0) ? std::setw(startLen) : std::setw(nodeSpaceLen)) << "" << ((*iter && (*iter)->pLeftNode_) ? std::setfill('_') : std::setfill(' '));
-        std::cout << std::setw(branchLen+2) << ((*iter) ? ValuePrinter<T>()((*iter)->value_) : "");
+        const std::string& valStr = intToString((*iter)->value_);
+        std::cout << std::setw(branchLen+valStr.length() ) << ((*iter) ?  valStr : "");
         std::cout << ((*iter && (*iter)->pRightNode_) ? std::setfill('_') : std::setfill(' ')) << std::setw(branchLen) << "" << std::setfill(' ');
       }
       std::cout << std::endl;
@@ -158,7 +197,7 @@ class BSTree {
     void printLeaves(int nodesInThisLevel, int indentSpace, const std::deque<BSTreeNode<T>*>& nodesQueue) const {
       typename std::deque<BSTreeNode<T>*>::const_iterator iter = nodesQueue.begin();
       for (int i = 0; i < nodesInThisLevel; i++, iter++) {
-        std::cout << ((i == 0) ? std::setw(indentSpace+2) : std::setw(4)) << ((*iter) ? ValuePrinter<T>()((*iter)->value_) : "");
+        std::cout << ((i == 0) ? std::setw(indentSpace+2) : std::setw(2*1+2)) << ((*iter) ? intToString((*iter)->value_) : "");//intToString((*iter)->value_) : "");
       }
       std::cout << std::endl;
     }
@@ -179,6 +218,7 @@ class BSTree {
 void createIntegerNodes(BSTree<int>& tree, const int nodeNum) {
   std::default_random_engine gen((std::random_device())() );
   //std::uniform_int_distribution<int> dis(0, 10000);
+  //***TODO***: pretty print tree with number non-2 digits
   std::uniform_int_distribution<int> dis(10, 99);
   std::vector<int> nodeValues;
   nodeValues.reserve(nodeNum);

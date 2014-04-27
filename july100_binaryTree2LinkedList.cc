@@ -30,15 +30,34 @@ int main(int /*argc*/, char */*argv*/[]) {
   BSTree<int> bst;
   createIntegerNodes(bst, 7);
   bst.printLevelNodePretty();
+
+  std::unique_ptr<BSTreeNode<int>> newRoot(new BSTreeNode<int>);
+  newRoot = bst.clone(std::move(newRoot) );
+  BSTreeNode<int>* newRootPtr = newRoot.get();
+
   BSTreeNode<int>* pHead = nullptr;
   BSTreeNode<int>* pTail = nullptr;
-#if 0
-  binaryTreeToLinkedList(*(bst.getRootPtr()), pHead, pTail);
+  //binaryTreeToLinkedList(*(bst.getRootPtr()), pHead, pTail);
+  binaryTreeToLinkedList(newRootPtr, pHead, pTail);
   while(pHead) {
     std::cout << int(pHead->value_) << "  ";
     pHead = pHead->pRightNode_;
   }
-  std::cout << std::endl;
+#if 0
+  while(pTail != newRootPtr) {
+    BSTreeNode<int>* tmpPtr = pTail->pLeftNode_;
+    delete pTail;
+    pTail = tmpPtr;
+  }
 #endif
+  //http://stackoverflow.com/questions/2265967/writing-a-linkedlist-destructor
+  pHead = newRootPtr ? newRootPtr->pRightNode_ : nullptr;
+  while(pHead) {
+    auto nextPtr = pHead->pRightNode_;
+    delete pHead;
+    pHead = nextPtr;
+  }
+
+  std::cout << std::endl;
   return 0;
 }
