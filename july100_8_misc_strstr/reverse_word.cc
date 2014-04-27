@@ -5,19 +5,17 @@ using namespace igloo;
 // condition: the final word in sentence is punctation
 void reverseSentences(std::string& text) {
   std::reverse(text.begin(), text.end() );
-  auto wordBegin = text.begin();
   auto wordEnd = text.begin();
   while(wordEnd != text.end() ) {
-    while(*wordEnd++ != ' ' && wordEnd != text.end() ); //loop until find whitespace
-    auto nextWordBegin = wordEnd;
-    //but wordEnd already points to the next word beginning, so decrement
-    --wordEnd;
-    if (*wordEnd == ' ') { // we don't need decrement when it's at end and not whitspace
-      --wordEnd;
+    // new method copy from july100_interview
+    while(*wordEnd == ' ' && wordEnd != text.end() ) {//check the whitspaces
+      ++wordEnd;
     }
-    std::reverse(wordBegin, wordEnd);
-    wordBegin = nextWordBegin;
-    wordEnd = nextWordBegin;
+    auto wordBegin = wordEnd;// new word beginning
+    while(*wordEnd != ' ' && wordEnd != text.end() ) {//loop through the whole word
+      ++wordEnd;
+    }
+    std::reverse(wordBegin, wordEnd);// reverse second argument means the iterator past the word end
   }
 }
 
@@ -27,5 +25,9 @@ Describe(reverse_english_sentence) {
     reverseSentences(textString);
     AssertThat(textString, Is().EqualTo(" easy that isn't life") );
   }
-
+  It(separated_with_one_more_whitespace) {
+    std::string textString = "where should I    find another better result";
+    reverseSentences(textString);
+    AssertThat(textString, Is().EqualTo("result better another find    I should where") );
+  }
 };
