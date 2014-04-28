@@ -45,11 +45,13 @@ int rabin_karp_indexOf(const std::string& haystacks, const std::string& needles)
   for (int i = 0; i < needleLen; ++i) {
     needleHash = needleHash*HASH_BASE + needles[i];
     hayHash = hayHash*HASH_BASE + haystacks[i];
-    reduceHash *= HASH_BASE;
+    if (i < needleLen - 1) {
+      reduceHash *= HASH_BASE;
+    }
   }
   int j = 0;
   while(j <= hayLen-needleLen) {
-    if (needleHash == hayHash && memcmp(needles.c_str(), haystacks.c_str() + j, needleLen) ) {
+    if (needleHash == hayHash && memcmp(needles.c_str(), haystacks.c_str() + j, needleLen) == 0) {
       return j;
     }
     hayHash = rehash(haystacks[j], haystacks[j+needleLen], hayHash, reduceHash);
@@ -63,14 +65,14 @@ Describe(Strstr) {
     std::string needle = "if wrong";
     std::string text = "where shoud if wrong i go ";
     int index = bm_sunday_indexOf(text, needle);
-    AssertThat(index, 13);
+    AssertThat(index, Equals(12) );
     int ondex = rabin_karp_indexOf(text, needle);
-    AssertThat(index, ondex);
+    AssertThat(ondex, Equals(index) );
   }
   It(unMatch) {
     std::string haystack = "nothing is right";
     std::string needle = "great bad";
     int index = bm_sunday_indexOf(haystack, needle);
-    AssertThat(index, -1);
+    AssertThat(index, Equals(-1) );
   }
 };
