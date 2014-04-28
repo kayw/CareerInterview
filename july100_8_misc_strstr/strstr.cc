@@ -33,7 +33,7 @@ int bm_sunday_indexOf(const std::string& text, const std::string& sub) {
 
 #define HASH_BASE 127
 int rehash(char a, char b, int hash, int reduce) {
-  return (hash - a*reduce)*HASH_BASE + b;
+  return ((hash - a*reduce)<<1) + b;
 }
 //http://www-igm.univ-mlv.fr/~lecroq/string/node5.html#SECTION0050
 int rabin_karp_indexOf(const std::string& haystacks, const std::string& needles) {
@@ -43,10 +43,10 @@ int rabin_karp_indexOf(const std::string& haystacks, const std::string& needles)
   int hayLen = haystacks.length();
   int reduceHash = 1;
   for (int i = 0; i < needleLen; ++i) {
-    needleHash = needleHash*HASH_BASE + needles[i];
-    hayHash = hayHash*HASH_BASE + haystacks[i];
+    needleHash = (needleHash<<1) + needles[i];
+    hayHash = (hayHash<<1) + haystacks[i];
     if (i < needleLen - 1) {
-      reduceHash *= HASH_BASE;
+      reduceHash <<= 1;
     }
   }
   int j = 0;
