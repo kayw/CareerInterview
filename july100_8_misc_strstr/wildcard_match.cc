@@ -1,5 +1,5 @@
 //http://www.kuqin.com/shuoit/20140105/337440.html
-//https://github.com/julycoding/The-Art-Of-Programming-By-July/blob/master/ebook/zh/01.03.md             (original about link1)(TODO: divide * ? substring parts & lookbehind method
+//https://github.com/julycoding/The-Art-Of-Programming-By-July/blob/master/ebook/zh/01.03.md             (original about link1)
 //字符串匹配问题，给定一串字符串，按照指定规则对其进行匹配，并将匹配的结果保存至output数组中，多个匹配项用空格间隔，最后一个不需要空格
 //
 //http://discuss.leetcode.com/questions/222/wildcard-matching  ==> about the full string matching
