@@ -57,9 +57,6 @@ clean:
 
 ALL := $(SRC) $(HEADER) $(UT_SRC)
 
-todo:
-	-@for file in $(ALL:makefile=); do ack -H -i "TODO|FIXME" $$file; done; true
-
 #http://unix.stackexchange.com/questions/37313/how-do-i-grep-for-multiple-patterns
 #http://wiki.osdev.org/Makefile
 #http://stackoverflow.com/questions/6153334/making-a-better-makefile

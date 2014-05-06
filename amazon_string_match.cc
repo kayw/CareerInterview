@@ -3,8 +3,6 @@
 #include <vector>
 #include <string>
 
-//need suffix tree ??
-//http://www.allisons.org/ll/AlgDS/Tree/Suffix/
 bool isRepeatMatch(const std::string& cmpString) {
   std::string repeater;
   int repeaterPtr = 0;
@@ -39,7 +37,9 @@ int main(int /*argc*/, char */*argv*/[]) {
   tests.push_back("abcdabcd");
   tests.push_back("abcdaabcd");
   tests.push_back("aaaaaaa");
-  tests.push_back("abaaba");//FAILED
+  tests.push_back("abaaba");//FAILED  TODO
+//need suffix tree ??
+//http://www.allisons.org/ll/AlgDS/Tree/Suffix/
   for (auto vecIter = tests.begin(); vecIter != tests.end(); ++vecIter) {
     printf("%s ", vecIter->c_str());
     if (isRepeatMatch(*vecIter) ) {

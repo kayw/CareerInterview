@@ -1,7 +1,6 @@
 SRC_SUFFIX = cc
-SRC := $(wildcard *.$(SRC_SUFFIX))
-SRC := $(shell find -R . -type f -name *.$(SRC_SUFFIX) -o -name *.hpp -o -name *.h)
-
+#SRC := $(wildcard *.$(SRC_SUFFIX))
+SRC := $(shell find . -type f -name '*.'$(SRC_SUFFIX) -o -name '*.hpp' -o -name '*.h')
 
 ALL := $(SRC)
 
