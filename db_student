@@ -1,3 +1,12 @@
 name score course
 
 non-fail students' name
+drop student_score;
+create student_score {
+	id primariy;
+	name varchar();
+	course varchar();
+	score varchar();
+}
+
+insert into student_score(name, course, score)  values ()

@@ -4,7 +4,7 @@ using namespace igloo;
 #if 0
 http://blog.csdn.net/liuxialong/article/details/6556096  (3.2 method isn't right)
 
-TODO: find the intersect node
+TODO: find the intersect node (acyclic or cyclic)
 https://www.google.com.hk/search?q=linkedlist+intersect
 
 http://www.cnblogs.com/Griffin/archive/2012/11/16/2772532.html (very messy seems to haven't talked about cyclic intersect)
