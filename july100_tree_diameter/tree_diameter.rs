@@ -17,7 +17,7 @@ pub struct RandomTree<V> {
     //https://github.com/rust-lang/rust/issues/9629
     //http://cmr.github.io/blog/2013/08/13/rust-by-concept/
     //http://stackoverflow.com/questions/16879287/mutable-struct-fields
-  root_: Box<TreeNode<V>>
+  root_: Box<TreeNode<V>> 
 }
 
 //#[deriving(Clone)]
@@ -35,41 +35,27 @@ impl<V:Ord+Clone+std::fmt::Show> RandomTree<V> {
         }
     }
 
-    fn height(self)  -> int {
-        RandomTree::height_helper(&self.root_)
-    }
-    
-    fn height_helper(root: &Box<TreeNode<V>>) -> int {
-       let mut cur_height = 0;
-       for child_node in root.children_.iter() {
-           let childheight = RandomTree::height_helper(child_node);
-           let this_height = childheight + 1;
-           if this_height > cur_height {
-               cur_height = this_height;
-           }
-       }
-       cur_height
-    }
-
 //http://stackoverflow.com/questions/13501216/how-to-find-the-max-distance-between-a-set-of-nodes-on-a-tree
     fn diameter(self) -> int {
-        RandomTree::diameter_helper(&self.root_)
+        let mut depth = 0;
+        RandomTree::diameter_helper(&self.root_, &mut depth)
     }
 
-    fn diameter_helper(root: &Box<TreeNode<V>>) -> int {
+    fn diameter_helper(root: &Box<TreeNode<V>>, depth: &mut int) -> int {
+        if root.is_leaf() {
+            *depth = 0;
+            0
+        }
+        else {
         let mut maxDepth = 0;
         let mut secMaxDepth = 0;
         let mut maxDiameter = 0;
+        let mut tmpDepth = 0;
         for child_node in root.children_.iter() {
-            let tmpDiameter = RandomTree::diameter_helper(child_node);
-            //maxDiameter = 
-            //    if tmpDiameter > maxDiameter { 
-            //        tmpDiameter 
-            //    } else {
-            //        maxDiameter
-            //    };
+            let tmpDiameter = RandomTree::diameter_helper(child_node, &mut tmpDepth);
+            println!("depth for node {}:{}",child_node.value_, tmpDepth);
             maxDiameter = max(maxDiameter, tmpDiameter);
-            let tmpDepth = RandomTree::height_helper(child_node);
+            //let tmpDepth = RandomTree::height_helper(child_node);
             if tmpDepth > maxDepth {
                 secMaxDepth = maxDepth;
                 maxDepth = tmpDepth;
@@ -77,7 +63,9 @@ impl<V:Ord+Clone+std::fmt::Show> RandomTree<V> {
                 secMaxDepth = tmpDepth;
             }
         }
+        *depth = maxDepth + 1;
         max(maxDiameter, maxDepth + secMaxDepth + 2)
+        }
     }
 
 //http://cs.brown.edu/cgc/jdsl/tutorial/lesson06/RandomTreeBuilder.java.html
@@ -126,9 +114,9 @@ impl<V:Ord+Clone+std::fmt::Show> RandomTree<V> {
         }
     }
 
-    fn print_tree(self) {
+    fn print_tree(&self) {
         //http://www.rustforrubyists.com/book/chapter-10.html
-        //http://stackoverflow.com/questions/21747136/how-do-i-print-the-type-of-a-variable-in-rusthttp://stackoverflow.com/questions/21747136/how-do-i-print-the-type-of-a-variable-in-rust
+        //http://stackoverflow.com/questions/21747136/how-do-i-print-the-type-of-a-variable-in-rust
         //println!("{:?}", node.value_);
         let mut children = Vec::new();
         children.push(&self.root_);
@@ -146,20 +134,42 @@ impl<V:Ord+Clone+std::fmt::Show> RandomTree<V> {
                 swap(&mut children, &mut next_level_children);
             }
         }
-        //RandomTree::print_helper(&self.root_);
     }
 
-    fn print_helper(node: &Box<TreeNode<V>>) {
-        //http://www.rustforrubyists.com/book/chapter-10.html
-        //http://stackoverflow.com/questions/21747136/how-do-i-print-the-type-of-a-variable-in-rusthttp://stackoverflow.com/questions/21747136/how-do-i-print-the-type-of-a-variable-in-rust
-        //println!("{:?}", node.value_);
-        println!("{}", node.value_);
-        println!("\n");
-        for child_node in node.children_.iter() {
-            RandomTree::print_helper(child_node);
-        }
-        if node.is_leaf() {
-            println!("end");
+    fn height(&self)  -> int {
+        RandomTree::height_helper(&self.root_)
+    }
+    
+    fn height_helper(root: &Box<TreeNode<V>>) -> int {
+       let mut cur_height = 0;
+       for child_node in root.children_.iter() {
+           let childheight = RandomTree::height_helper(child_node);
+           let this_height = childheight + 1;
+           if this_height > cur_height {
+               cur_height = this_height;
+           }
+       }
+       cur_height
+    }
+
+    fn print_tree_in_level(&self) {
+        //TODO print pretty
+        let h = self.height()+1;
+        let mut node_queue = Vec::new();
+        node_queue.push(&self.root_);
+        for level in range(0,h) {
+            for node in node_queue.iter() {
+                print!("{} ",node.value_);
+            }
+            print!("\n");
+            //let mut tmp_nodes = 0;
+            let nodes_in_level = node_queue.len();
+            for i in range(0, nodes_in_level) {
+                let node = node_queue.remove(0).unwrap();
+                for child_node in node.children_.iter() {
+                    node_queue.push(child_node);
+                }
+            }
         }
     }
 }
@@ -185,6 +195,7 @@ mod test_random_tree {
         let tree : RandomTree<int> = RandomTree::build_random_tree(&vals);
         //http://stackoverflow.com/questions/25106554/println-doesnt-work-in-rust-unit-tests
         tree.print_tree();
+        tree.print_tree_in_level();
     }
 
     #[test]
