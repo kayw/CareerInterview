@@ -1,4 +1,3 @@
-//http://codereview.stackexchange.com/questions/42718/conways-game-of-life
 //// An implementation of Conway's Game of Life.
 package main
 
