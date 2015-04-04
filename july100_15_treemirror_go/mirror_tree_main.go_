@@ -1,0 +1,33 @@
+package main
+
+type TreeNode struct {
+	leftNode_, rightNode_ *TreeNode
+	data_                 interface{}
+}
+
+func (root *TreeNode) mirror() {
+	nodeStack := make([]*TreeNode, 16)
+	nodeStack = append(nodeStack, root)
+	for len(nodeStack) != 0 {
+		r := nodeStack[0]
+		nodeStack = nodeStack[1:]
+		r.leftNode_, r.rightNode_ = r.rightNode_, r.leftNode_
+		if r.leftNode_ != nil {
+			nodeStack = append(nodeStack, r.leftNode_)
+		}
+		if r.rightNode_ != nil {
+			nodeStack = append(nodeStack, r.rightNode_)
+		}
+	}
+}
+
+func main() {
+	ll1 := TreeNode{data_: "ll1"}
+	ll2 := TreeNode{data_: "ll2"}
+	lb := TreeNode{data_: "lb", leftNode_: &ll1, rightNode_: &ll2}
+	rl1 := TreeNode{data_: "rl1"}
+	rl2 := TreeNode{data_: "rl2"}
+	rb := TreeNode{data_: "rb", leftNode_: &rl1, rightNode_: &rl2}
+	r := TreeNode{data_: "r", leftNode_: &lb, rightNode_: &rb}
+	r.mirror()
+}

@@ -79,3 +79,134 @@ int main() {
   cstring_shift(pStr2, 8, 4);
   printf("%s\n", pStr2 );
 }
+
+#if 0
+//73楼|CrTn|2013-05-06 22:41:47|只看此ID
+//从屁股往前扫一遍不就可以了么
+#include <iostream>
+#include <unordered_map>
+
+#include <type_traits>
+#include <string>
+#include <vector>
+using namespace std;
+
+template <typename T>
+T firstUnique(const T& beg, const T& end) {
+    using keyType = typename remove_const<
+        typename remove_reference<decltype(*beg)
+            >::type>::type;
+    unordered_map<keyType, size_t> stat;
+    auto it = beg;
+    auto res = beg;
+    while(it != end) {
+        const auto &ref = *it;
+        ++stat[ref];
+        if(stat[ref] == 1)
+            res = it;
+        ++it;
+    }
+
+    const auto &ref = *res;
+    if(stat[ref] == 1)
+        return res;
+    else {
+        return end;
+    }
+}
+
+int main()
+{
+    string str = "afdafgag";
+    auto cit = firstUnique(str.crbegin(), str.crend());
+    if(cit != str.crend())
+        cout << *cit << endl;
+    else
+        cout << "No Unique" << endl;
+
+    vector<int> ivec{1,2,3,2,3,4,5,1,9,3,3,2,5,6};
+    auto iit = firstUnique(ivec.crbegin(), ivec.crend());
+    if(iit != ivec.crend())
+        cout << *iit << endl;
+    else
+        cout << "No Unique" << endl;
+
+    return 0;
+}
+#endif
+
+#if 0
+linkedhashtable
+27楼|bxhsix|2012-03-30 15:08:11|
+第一道应该是hash表+双向链表，简单写了一下，应该可以一遍解决问题
+
+#include <iostream>
+#include <map>
+
+using namespace std;
+
+struct pointer
+{
+    int prev_chr;
+    int next_chr;
+};
+
+int main(int argc, char *argv[])
+{
+    if (argc < 2)
+    {
+        cout << "Usage: " << argv[0] << " <InputString>" << endl;
+        return -1;
+    }
+
+    char *str = argv[1];
+    map<char, pointer> hash;
+    int first_uniq_chr = -1;
+    int last_chr = -1;
+
+    for (int i=0; str[i]!='\0'; ++i)
+    {
+        if (first_uniq_chr == -1)
+        {
+            if (hash.find(str[i]) == hash.end())
+            {
+                first_uniq_chr = i;
+                last_chr = i;
+                hash[str[i]] = (pointer){-1, -1};
+            }
+            continue;
+        }
+
+        if (str[i] == str[first_uniq_chr])
+        {
+            first_uniq_chr = hash[str[first_uniq_chr]].next_chr;
+        }
+        else
+        {
+            if (hash.find(str[i]) == hash.end())
+            {
+                hash[str[i]] = (pointer){last_chr, -1};
+                hash[str[last_chr]].next_chr = i;
+                last_chr = i;
+            }
+            else
+            {
+                if (hash[str[i]].prev_chr != -2)
+                {
+                    hash[str[hash[str[i]].prev_chr]].next_chr = hash[str[i]].next_chr;
+                    hash[str[hash[str[i]].next_chr]].prev_chr = hash[str[i]].prev_chr;
+                    if (str[i] == str[last_chr])
+                    {
+                        last_chr = hash[str[last_chr]].prev_chr;
+                    }
+                    hash[str[i]].prev_chr = -2;
+                }
+            }
+        }
+    }
+
+    cout << first_uniq_chr << ": " << str[first_uniq_chr] << endl;
+
+    return 0;
+}
+#endif 
