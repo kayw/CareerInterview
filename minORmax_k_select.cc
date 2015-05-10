@@ -47,6 +47,11 @@ void BFPRTSelect(T (&arr)[N], int k, std::vector<T>& kthVec) {
   quickSelect<T, Comp, N>(arr, 0, N - 1, k, kthVec);
 }
 
+//https://www.v2ex.com/t/182407
+//a[N] K[r]  O(Nlogr)
+//首先把 K 排序，取第 r/2 个元素，SELECT 从 S 中找到第 K(r/2) 小元素 S(r/2)。
+//将 S 按照 S(r/2) 分割为两半，一半全小于 S(r/2) 一半全大于 S(r/2)。
+//在小的那一半中查找 K(j<r/2)，在大的那一半查找 K(j>r/2)。
 #include <random>
 int main(int /*argc*/, char */*argv*/[]) {
   int arr[9] = {8,4,6,3, 12, 17,14, 1, 25};
