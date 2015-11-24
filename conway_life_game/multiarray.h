@@ -14,6 +14,15 @@ template<unsigned int N, unsigned int ...S> struct gens : gens<N-1, N-1, S...> {
 template<unsigned int ...S> struct gens<0, S...>{ typedef seq<S...> type; };
 }
 
+namespace sliceutils {
+//slice helpers
+//
+template<unsigned int N, typename Ti, typename ... Types>
+struct count_idx : count_idx<N+(std::is_integral<Ti>::value?1:0), Types...> {};
+
+template<unsigned int N, typename Ti>
+struct count_idx<N, Ti> { constexpr static unsigned int value=N+(std::is_integral<Ti>::value?1:0); };
+}
 class range : public std::vector<unsigned int> {
 public:
     range(unsigned int first, unsigned int last) : std::vector<unsigned int>(last-first+1) {
@@ -93,14 +102,8 @@ private:
     inline T& set_impl(const A& arr, sequtils::seq<I...>) {
         return set(arr[I]...);
     }
-#if 0 // TODO try clang3.5+
+    // TODO try clang3.5+
     //slice helpers
-
-    template<unsigned int N, typename Ti, typename ... Types>
-    struct count_idx : count_idx<N+(std::is_integral<Ti>::value?1:0), Types...> {};
-
-    template<unsigned int N, typename Ti>
-    struct count_idx<N, Ti> { constexpr static unsigned int value=N+(std::is_integral<Ti>::value?1:0); };
 
     template<smallidx_t slice_ndim, typename ... Types>
     inline void slice_size(typename MultiArray<T,slice_ndim>::multiIdx_t &res, smallidx_t i, smallidx_t j, range& first, Types&...rest) {
@@ -141,14 +144,13 @@ private:
     inline R slice_impl(const A& arr, sequtils::seq<I...>) {
         return slice(std::get<I>(arr)...);
     }
-#endif
 
 public:
     MultiArray() :
         strides(nullptr),
         arr_size(0),
         data(nullptr),
-        msize{0}
+        msize{{0}}
     {
 
     }
@@ -158,7 +160,7 @@ public:
         strides(new idx_t[ndim-1],std::default_delete<idx_t[]>()),
         arr_size(nfirst*fill_strides(0,counts...)),
         data(new T[arr_size],std::default_delete<T[]>()),
-        msize{ {nfirst, counts... }}//FIXME
+        msize{{nfirst, counts...}}
 	//http://stackoverflow.com/questions/20176176/function-taking-variadic-number-of-initializer-lists-with-different-types
 	//http://stackoverflow.com/questions/9146534/stdarray-initializer-list-initialization-in-initialization-list
 	//http://stackoverflow.com/questions/8298214/size-of-built-in-multidimensional-array-using-variadic-template-function
@@ -176,36 +178,18 @@ public:
         static_assert(ndim==1,"Invalid number of arguments in MultiArray constructor");
     }
 
-    MultiArray(const MultiArray &other) :
-        strides(other.strides),
-        arr_size(other.arr_size),
-        data(other.data),
-        msize(other.msize)
-    {
-    }
+    MultiArray(const MultiArray &) = default;
 
     MultiArray(MultiArray &&other) :
-        strides(other.strides),
-        arr_size(other.arr_size),
-        data(other.data),
-        msize(other.msize)
+        MultiArray(other)
     {
         other.clear();
     }
 
-    MultiArray & operator=(const MultiArray &other) {
-        strides=other.strides;
-        arr_size=other.arr_size;
-        data=other.data;
-        msize=other.msize;
-        return *this;
-    }
+    MultiArray & operator=(const MultiArray &) = default;
 
     MultiArray & operator=(MultiArray &&other) {
-        strides=other.strides;
-        arr_size=other.arr_size;
-        data=other.data;
-        msize=other.msize;
+        *this = other;
         other.clear();
         return *this;
     }
@@ -269,17 +253,16 @@ public:
         arr_size=0;
         msize={0};
     }
-#if 0
-    template<typename ... Types>
-    MultiArray<T,ndim-count_idx<0,Types...>::value> slice(Types... args);
 
     template<typename ... Types>
-    MultiArray<T,ndim-count_idx<0,Types...>::value> slice(std::tuple<Types...> arg) {
+    MultiArray<T,ndim - sliceutils::count_idx<0,Types...>::value> slice(Types... args);
+
+    template<typename ... Types>
+    MultiArray<T,ndim - sliceutils::count_idx<0,Types...>::value> slice(std::tuple<Types...> arg) {
         return slice_impl<
-                MultiArray<T,ndim-count_idx<0,Types...>::value>
+                MultiArray<T,ndim - sliceutils::count_idx<0,Types...>::value>
                 >(arg,typename sequtils::gens<sizeof...(Types)>::type());
     }
-#endif
 
     //iterators
 
@@ -392,11 +375,10 @@ auto make_array(std::array<unsigned int,N> size) -> MultiArray<T,N> {
     return make_array_helper<T>(size,typename sequtils::gens<N>::type());
 }
 
-#if 0
 template<typename T, unsigned int ndim>
 template<typename ... Types>
-MultiArray<T,ndim-MultiArray<T,ndim>::count_idx<0,Types...>::value> MultiArray<T,ndim>::slice(Types... args) {
-    constexpr auto N=count_idx<0,Types...>::value;
+MultiArray<T,ndim - sliceutils::count_idx<0,Types...>::value> MultiArray<T,ndim>::slice(Types... args) {
+    constexpr auto N = sliceutils::count_idx<0,Types...>::value;
     static_assert(N<ndim,"Slice of dimension<=0. Probably that's not what you want!");
     std::array<unsigned int,ndim-N> size;
     slice_size<ndim-N>(size,0,0,args...);
@@ -406,6 +388,5 @@ MultiArray<T,ndim-MultiArray<T,ndim>::count_idx<0,Types...>::value> MultiArray<T
     fill<ndim-N>(result,idx1,0,idx2,0,args...);
     return result;
 }
-#endif
 
 #endif // MULTIARRAY_H
