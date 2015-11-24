@@ -1,12 +1,13 @@
 //http://blog.csdn.net/xufei96/article/details/5982397
 //1、2、4、7、11、15[15]   4+11=15 ouput is  4,11
-type IndexPair =  (int,int);
-fn find_index_equal_sum(array: &[int], sum: int) -> IndexPair {
-    let mut hi_idx = array.len() as int - 1;
+#![feature(convert)]
+type IndexPair =  (isize,isize);
+fn find_index_equal_sum(array: &[isize], sum: isize) -> IndexPair {
+    let mut hi_idx = array.len() as isize - 1;
     let mut lo_idx = 0;
     let mut ip = (lo_idx, hi_idx);
     while lo_idx < hi_idx {
-        let idx_sum = array[hi_idx as uint] + array[lo_idx as uint];
+        let idx_sum = array[hi_idx as usize] + array[lo_idx as usize];
         if idx_sum > sum {
             hi_idx -= 1;
         }  else if idx_sum < sum {

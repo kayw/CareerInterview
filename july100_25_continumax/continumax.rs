@@ -1,8 +1,8 @@
-
+#![feature(str_char)]
 fn continumax_param_pass<'a>(output: &mut String, input: &'a str) -> usize {
     //libstd/sys/windows/process.rs fn append_arg(cmd: &mut String, arg: &str)
     //
-    //stackoverflow.com/questions/19649005/why-using-rust-does-passing-a-mutable-struct-to-a-function-result-in-immutable-f
+    //http://stackoverflow.com/questions/19649005/why-using-rust-does-passing-a-mutable-struct-to-a-function-result-in-immutable-f
     let mut max_len = 0;
     let mut so_far_len = 0;
     let mut so_far_begin = 0;
@@ -39,8 +39,8 @@ fn continumax_param_pass<'a>(output: &mut String, input: &'a str) -> usize {
     //libcore/fmt/builder impl<'a, 'b: 'a> fmt::Write for PadAdapter<'a, 'b>: same mut str overwrite
     //output = input.slice_chars(so_far_begin, so_far_begin + max_len);
     
-        println!("{}", so_far_begin);
-        println!("{}", max_len);
+        println!("so_far_begin {}", so_far_begin);
+        println!("max_len {}", max_len);
     for i in so_far_begin..(so_far_begin + max_len) {
         println!("{}", input.char_at(i));
         output.push(input.char_at(i));
@@ -77,7 +77,7 @@ fn continumax<'a>(input: &'a str) -> (&'a str, usize) {
     //http://stackoverflow.com/questions/28615756/how-do-i-borrow-an-iterator
     //let input_iter = input.chars();
     //output = input_iter.clone().skip(so_far_begin).take(so_far_len);
-    let output = input.slice_chars(so_far_begin, so_far_begin + max_len);
+    let output = &input[so_far_begin..so_far_begin + max_len];
     println!("{}", max_len);
     (output, max_len)
 }
@@ -89,10 +89,10 @@ fn test_continumax() {
     assert_eq!(max_len, 6);
     assert_eq!(output_buffer, "123456");
 
-    let mut output_str: String = String::new();//from_str("");
+    let mut output_str: String = String::new();
     //let mut output_str: Iterator;
     let white_sep_input = "sf233 2342 djf3";
     let max_len = continumax_param_pass(&mut output_str, white_sep_input);
     assert_eq!(max_len, 4);
-    assert_eq!(output_str, String::from_str("2342"));
+    assert_eq!(output_str, "2342");
 }

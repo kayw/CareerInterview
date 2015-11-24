@@ -40,6 +40,7 @@ int main(int /*argc*/, char */*argv*/[]) {
   tests.push_back("abaaba");//FAILED  TODO
 //need suffix tree ??
 //http://www.allisons.org/ll/AlgDS/Tree/Suffix/
+
   for (auto vecIter = tests.begin(); vecIter != tests.end(); ++vecIter) {
     printf("%s ", vecIter->c_str());
     if (isRepeatMatch(*vecIter) ) {

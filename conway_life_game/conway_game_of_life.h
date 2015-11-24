@@ -5,17 +5,17 @@
 #include <iostream>
 class Field {
   public:
-    Field(const int h, const int w) 
+    Field(const int h, const int w)
       : states_(static_cast<unsigned int>(h), static_cast<unsigned int>(w))
     , width_(w),height_(h)
     {}
-      
+
     void set(int x, int y, bool state) {
       states_(y, x) = state;
     }
 
     bool isAlive(int x, int y) {
-      x = (x+width_)%width_; 
+      x = (x+width_)%width_;
       y = (y+height_)%height_;
       return states_(y, x);
     }

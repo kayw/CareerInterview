@@ -1,4 +1,3 @@
-
 //http://stackoverflow.com/questions/14878228/creating-a-random-tree
 //https://github.com/rust-lang/rust/issues/4992
 //
@@ -8,16 +7,19 @@
 //http://stackoverflow.com/questions/21791786/rudimentary-tree-and-pointers-in-rust
 //http://stackoverflow.com/questions/21435202/canonical-implementation-of-mutable-trees
 
+#![feature(box_syntax)]
+#![feature(rand)]
+#![feature(convert)]
 //extern crate debug;
 use std::mem::swap;
-use std::rand::{task_rng, Rng};//http://stackoverflow.com/questions/19671845/how-can-i-generate-a-random-number-within-a-range-in-rust
-use std::iter::range_step;
+// http://192.168.56.7/rustdoc/rand/trait.Rng.html
+use std::__rand::{thread_rng, Rng};//http://stackoverflow.com/questions/19671845/how-can-i-generate-a-random-number-within-a-range-in-rust
 use std::cmp::max;
 pub struct RandomTree<V> {
     //https://github.com/rust-lang/rust/issues/9629
     //http://cmr.github.io/blog/2013/08/13/rust-by-concept/
     //http://stackoverflow.com/questions/16879287/mutable-struct-fields
-  root_: Box<TreeNode<V>> 
+  root_: Box<TreeNode<V>>
 }
 
 //#[deriving(Clone)]
@@ -26,7 +28,7 @@ struct TreeNode<V> {
     children_: Vec<Box<TreeNode<V>>>
 }
 
-impl<V:Ord+Clone+std::fmt::Show> RandomTree<V> {
+impl<V:Ord+Clone+std::fmt::Display> RandomTree<V> {
     //http://stackoverflow.com/questions/3522454/java-tree-data-structure
     //http://www.quesucede.com/page/show/id/java-tree-implementation
     fn new_tree(value: V) -> RandomTree<V> {
@@ -36,80 +38,79 @@ impl<V:Ord+Clone+std::fmt::Show> RandomTree<V> {
     }
 
 //http://stackoverflow.com/questions/13501216/how-to-find-the-max-distance-between-a-set-of-nodes-on-a-tree
-    fn diameter(self) -> int {
+    fn diameter(self) -> isize {
         let mut depth = 0;
         RandomTree::diameter_helper(&self.root_, &mut depth)
     }
 
-    fn diameter_helper(root: &Box<TreeNode<V>>, depth: &mut int) -> int {
+    fn diameter_helper(root: &Box<TreeNode<V>>, depth: &mut isize) -> isize {
         if root.is_leaf() {
             *depth = 0;
             0
         }
         else {
-        let mut maxDepth = 0;
-        let mut secMaxDepth = 0;
-        let mut maxDiameter = 0;
-        let mut tmpDepth = 0;
+        let mut max_depth = 0;
+        let mut sec_max_depth = 0;
+        let mut max_diameter = 0;
+        let mut tmp_depth = 0;
         for child_node in root.children_.iter() {
-            let tmpDiameter = RandomTree::diameter_helper(child_node, &mut tmpDepth);
-            println!("depth for node {}:{}",child_node.value_, tmpDepth);
-            maxDiameter = max(maxDiameter, tmpDiameter);
-            //let tmpDepth = RandomTree::height_helper(child_node);
-            if tmpDepth > maxDepth {
-                secMaxDepth = maxDepth;
-                maxDepth = tmpDepth;
-            } else if tmpDepth > secMaxDepth {
-                secMaxDepth = tmpDepth;
+            let tmp_diameter = RandomTree::diameter_helper(child_node, &mut tmp_depth);
+            println!("depth for node {}:{}",child_node.value_, tmp_depth);
+            max_diameter = max(max_diameter, tmp_diameter);
+            //let tmp_depth = RandomTree::height_helper(child_node);
+            if tmp_depth > max_depth {
+                sec_max_depth = max_depth;
+                max_depth = tmp_depth;
+            } else if tmp_depth > sec_max_depth {
+                sec_max_depth = tmp_depth;
             }
         }
-        *depth = maxDepth + 1;
-        max(maxDiameter, maxDepth + secMaxDepth + 2)
+        *depth = max_depth + 1;
+        max(max_diameter, max_depth + sec_max_depth + 2)
         }
     }
 
 //http://cs.brown.edu/cgc/jdsl/tutorial/lesson06/RandomTreeBuilder.java.html
-    fn build_random_tree(nodeVals: &Vec<V>) -> RandomTree<V> {
-        let mut root = box TreeNode{ value_: nodeVals[0].clone(), children_: Vec::new() };
-        RandomTree::build_random_tree_helper(&mut root, nodeVals, 1, nodeVals.len() as int - 1);
+    fn build_random_tree(node_vals: &Vec<V>) -> RandomTree<V> {
+        let mut root = box TreeNode{ value_: node_vals[0].clone(), children_: Vec::new() };
+        RandomTree::build_random_tree_helper(&mut root, node_vals, 1, node_vals.len() as isize - 1);
         RandomTree { root_ : root }
     }
-    
-    fn build_random_tree_helper(curRoot: &mut Box<TreeNode<V>>, nodeVals: &Vec<V>, valPos: uint, childrenSize: int) { 
-    // valPos start at the remaining nodeval vector position
+
+    fn build_random_tree_helper(cur_root: &mut Box<TreeNode<V>>, node_vals: &Vec<V>, val_pos: usize, children_size: isize) {
+    // val_pos start at the remaining nodeval vector position
         //TODO: bfs
-        let mut sizeVec : Vec<int> = Vec::new();
-        let mut toBuild = childrenSize;
-        while toBuild > 0 {
-            let childrenNum = 
-                if toBuild > 1 {
-                    task_rng().gen_range(1, toBuild)
+        let mut size_vec : Vec<isize> = Vec::new();
+        let mut to_build = children_size;
+        while to_build > 0 {
+            let children_num =
+                if to_build > 1 {
+                    thread_rng().gen_range(1, to_build)
                 } else {
                     1
                 };
-            toBuild -= childrenNum;
-            sizeVec.push(childrenNum);
+            to_build -= children_num;
+            size_vec.push(children_num);
         }
-        RandomTree::<V>::permute(&mut sizeVec);
-        let mut childPos = valPos + sizeVec.len();
-        for i in range(0, sizeVec.len()) {
+        RandomTree::<V>::permute(&mut size_vec);
+        let mut child_pos = val_pos + size_vec.len();
+        for i in 0..size_vec.len() {
             //see todo in private-lab:bound_unconstrainted_type(vec_index_move_generic)
-            let mut child = box TreeNode{ value_: nodeVals[valPos+i].clone(), children_: vec![] };
-            RandomTree::build_random_tree_helper(&mut child, nodeVals, childPos, sizeVec[i]-1);// nodevals after the father node allocate
-            childPos += sizeVec[i] as uint - 1;
-            curRoot.add_node(child);
-            //curRoot.children_.push(child);
+            let mut child = box TreeNode{ value_: node_vals[val_pos+i].clone(), children_: vec![] };
+            RandomTree::build_random_tree_helper(&mut child, node_vals, child_pos, size_vec[i]-1);// nodevals after the father node allocate
+            child_pos += size_vec[i] as usize - 1;
+            cur_root.add_node(child);
+            //cur_root.children_.push(child);
         }
     }
-    
+
     //http://stackoverflow.com/questions/13619520/in-rust-does-modifying-a-borrowed-pointer-change-the-original-value
-    fn permute(sizes: &mut Vec<int>) {
+    fn permute(sizes: &mut Vec<isize>) {
         //https://github.com/rust-lang/rust/issues/1817
-        for i in range_step(sizes.len() as int - 1, 0, -1) {
-        //for i = sizes.len() - 1; i  > 1; --i {
-            let j = task_rng().gen_range(0, i);
+        for i in (1..sizes.len()).rev() { //https://internals.rust-lang.org/t/step-by-on-negative-numbers/2231/3
+            let j = thread_rng().gen_range(0, i);
             if j < i {
-                sizes.as_mut_slice().swap(i as uint, j as uint);
+                sizes.as_mut_slice().swap(i as usize, j as usize);
             }
         }
     }
@@ -122,7 +123,7 @@ impl<V:Ord+Clone+std::fmt::Show> RandomTree<V> {
         children.push(&self.root_);
         let mut next_level_children = Vec::new();
         while children.len() > 0 {
-            let child = children.remove(0).unwrap();
+            let child = children.remove(0);
             print!(" {}({})", child.value_, child.children_.len());
             for next_child in child.children_.iter() {
                 next_level_children.push(next_child);
@@ -136,11 +137,11 @@ impl<V:Ord+Clone+std::fmt::Show> RandomTree<V> {
         }
     }
 
-    fn height(&self)  -> int {
+    fn height(&self) -> isize {
         RandomTree::height_helper(&self.root_)
     }
-    
-    fn height_helper(root: &Box<TreeNode<V>>) -> int {
+
+    fn height_helper(root: &Box<TreeNode<V>>) -> isize {
        let mut cur_height = 0;
        for child_node in root.children_.iter() {
            let childheight = RandomTree::height_helper(child_node);
@@ -157,15 +158,15 @@ impl<V:Ord+Clone+std::fmt::Show> RandomTree<V> {
         let h = self.height()+1;
         let mut node_queue = Vec::new();
         node_queue.push(&self.root_);
-        for level in range(0,h) {
+        for level in 0..h {
             for node in node_queue.iter() {
                 print!("{} ",node.value_);
             }
             print!("\n");
             //let mut tmp_nodes = 0;
             let nodes_in_level = node_queue.len();
-            for i in range(0, nodes_in_level) {
-                let node = node_queue.remove(0).unwrap();
+            for _ in 0..nodes_in_level {
+                let node = node_queue.remove(0);
                 for child_node in node.children_.iter() {
                     node_queue.push(child_node);
                 }
@@ -192,8 +193,9 @@ mod test_random_tree {
     #[test]
     fn test_random_create() {
         let vals = vec![11,5,6,3,7,9,2];
-        let tree : RandomTree<int> = RandomTree::build_random_tree(&vals);
+        let tree : RandomTree<isize> = RandomTree::build_random_tree(&vals);
         //http://stackoverflow.com/questions/25106554/println-doesnt-work-in-rust-unit-tests
+        //--nocature
         tree.print_tree();
         tree.print_tree_in_level();
     }
@@ -203,7 +205,7 @@ mod test_random_tree {
         //        root
         //      b1          b2
         //  leaf1  leaf2     b3
-        //                  leaf3         
+        //                  leaf3
         let l1 = box TreeNode { value_ : "leaf1", children_: Vec::new() };
         let l2 = box TreeNode { value_: "leaf2", children_: Vec::new() };
         let mut branch1 = box TreeNode { value_: "b1", children_: Vec::new() };

@@ -13,6 +13,9 @@ int calcMaxSubSum(int (&a)[N]) {
     }
   }
   //TODO:http://bbs.csdn.net/topics/350187239#post-360546349
+  //1.问这样的子串有多少个。
+  //2.如果是首尾相连的，那么最大子串和是多少，有多少个。
+  //3.如果是首尾相连的，取两个不相交子串，那么最大子串和是多少。
   return maxsofar;
 }
 
