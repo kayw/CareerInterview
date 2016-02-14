@@ -1,15 +1,16 @@
-// Package debug
 // http://stackoverflow.com/questions/25950873/golang-gdb-print-variables
-package debug
+package gobase
 
 import (
-	"path"
+	"fmt"
+	"path/filepath"
+	"runtime"
 	"sync"
 )
 
 var traceLock sync.Mutex
 
-func trace(a ...interface{}) {
+func Trace(a ...interface{}) {
 	traceLock.Lock()
 	pc, f, ln, ok := runtime.Caller(1)
 	fn := ""

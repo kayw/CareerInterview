@@ -9,7 +9,6 @@
 
 #![feature(box_syntax)]
 #![feature(rand)]
-#![feature(convert)]
 //extern crate debug;
 use std::mem::swap;
 // http://192.168.56.7/rustdoc/rand/trait.Rng.html
@@ -142,15 +141,15 @@ impl<V:Ord+Clone+std::fmt::Display> RandomTree<V> {
     }
 
     fn height_helper(root: &Box<TreeNode<V>>) -> isize {
-       let mut cur_height = 0;
-       for child_node in root.children_.iter() {
-           let childheight = RandomTree::height_helper(child_node);
-           let this_height = childheight + 1;
-           if this_height > cur_height {
-               cur_height = this_height;
-           }
-       }
-       cur_height
+        let mut cur_height = 0;
+        for child_node in root.children_.iter() {
+            let childheight = RandomTree::height_helper(child_node);
+            let this_height = childheight + 1;
+            if this_height > cur_height {
+                cur_height = this_height;
+            }
+        }
+        cur_height
     }
 
     fn print_tree_in_level(&self) {
@@ -160,7 +159,7 @@ impl<V:Ord+Clone+std::fmt::Display> RandomTree<V> {
         node_queue.push(&self.root_);
         for level in 0..h {
             for node in node_queue.iter() {
-                print!("{} ",node.value_);
+                print!("{} ", node.value_);
             }
             print!("\n");
             //let mut tmp_nodes = 0;
