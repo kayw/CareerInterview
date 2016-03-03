@@ -1,0 +1,52 @@
+// Author :: Gaurav Ahirwar
+#include<bits/stdc++.h>
+#define FOR(i,n) for(int i=(0);i<(n);i++)
+#define INF INT_MAX
+using namespace std;
+
+void getdiff(int arr[], int seta[], int setb[], int fseta[], int fsetb[], int inda, int indb, int i, int suma, int sumb, int &diff) {
+
+	if(i < 0 && abs(suma - sumb) < diff) {
+		FOR(j,inda) fseta[j] = seta[j];
+		FOR(j,indb) fsetb[j] = setb[j];
+		fseta[inda] = -1;
+		fsetb[indb] = -1;
+		diff = abs(suma-sumb);
+	}
+
+	//	static int x = 0; cout << "Iteration = " << ++x << " \n";
+	if(i < 0) return;
+
+	seta[inda] = arr[i];
+	getdiff(arr, seta, setb, fseta, fsetb, inda+1,indb, i-1, suma + arr[i], sumb, diff);
+	setb[indb] = arr[i];
+	getdiff(arr, seta, setb, fseta, fsetb, inda,indb+1, i-1, suma , sumb + arr[i], diff);
+}
+
+void topdown(int arr[], int n) {
+
+	int seta [n+1], setb [n+1], fseta [n+1], fsetb [n+1];
+	FOR(i,n) seta[i] = -1, setb[i] = -1;
+	int suma = 0, sumb = 0, indexa = 0, indexb = 0;
+	int diff = INF, array_index = n-1;
+
+	getdiff(arr, seta, setb, fseta, fsetb, indexa, indexb, array_index, suma, sumb, diff);
+
+	cout << "Set 1 => ";
+	for(int i = 0; i <= n; i++) cout << fseta[i] << " ";
+  cout << endl;
+	for(int i = 0; i <= n && fseta[i] != -1; i++) cout << fseta[i] << " ";
+	cout << endl << "Set 2 => ";
+	for(int i = 0; i <= n; i++) cout << fsetb[i] << " ";
+  cout << endl;
+	for(int i = 0; i <= n && fsetb[i] != -1; i++) cout << fsetb[i] << " ";	
+	cout << "\nDifference => " << diff << endl;
+}
+
+int main() {
+
+	int arr[] = {1,7,4,11}; 
+	int n = sizeof(arr)/sizeof(arr[0]);
+	topdown(arr, n);
+	return 0;
+}
