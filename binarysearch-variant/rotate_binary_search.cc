@@ -231,6 +231,7 @@ int main(int /*argc*/, char */*argv*/[]) {
 }
 
 
+//todo
 //other bitonic problem to lookup:
 //determine if bitonic sequence(http://stackoverflow.com/questions/3029024/bitonic-sequence)
 //longest bitonic sequece(http://www.geeksforgeeks.org/dynamic-programming-set-15-longest-bitonic-subsequence/)
