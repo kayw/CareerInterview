@@ -7,6 +7,10 @@ func TestFindRotateMin(t *testing.T) {
 	if min != 0 {
 		t.Errorf("rotate min should be 0, got %d", min)
 	}
+	min = FindMin([]int{6, 3, 4, 5})
+	if min != 3 {
+		t.Errorf("rotate min should be 0, got %d", min)
+	}
 	min = FindMin([]int{2, 1})
 	if min != 1 {
 		t.Errorf("rotate min should be 0, got %d", min)

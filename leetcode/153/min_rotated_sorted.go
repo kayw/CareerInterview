@@ -1,5 +1,6 @@
 package career_interview
 
+//https://siddontang.gitbooks.io/leetcode-solution/content/array/find_minimum_in_rotated_sorted_array.html
 func FindMin(nums []int) int {
 	len := len(nums)
 	if len == 0 {
@@ -24,24 +25,13 @@ func FindMin(nums []int) int {
 		mid = lo + (hi-lo)/2
 		println("mid", mid)
 		println("nums[lo]:", nums[lo], "nums[mid]:", nums[mid], "nums[hi]:", nums[hi])
-		/*
-			if nums[lo] > nums[mid] {
-				lo = mid
-			} else if nums[mid] > nums[lo] {
-				hi = mid
-			}
-		*/
-		if nums[lo] < nums[mid] && nums[mid] > nums[hi] {
-			lo = mid
-		} else if nums[lo] > nums[mid] && nums[mid] < nums[hi] {
-			lo = mid
-		} else if nums[lo] < nums[mid] && nums[mid] < nums[hi] {
+		if nums[lo] > nums[mid] {
 			hi = mid
-		} else if nums[lo] == nums[mid] && nums[lo] < nums[hi] {
-			hi = mid
-		} else if nums[lo] < nums[hi] && nums[mid] == nums[hi] {
+		} else if nums[mid] > nums[lo] {
 			lo = mid
 		}
 	}
 	return nums[mid]
 }
+
+// http://www.cnblogs.com/yuzhangcmu/p/4049030.html
