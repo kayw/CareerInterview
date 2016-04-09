@@ -1,0 +1,78 @@
+class Solution {
+public:
+    string convert(string s, int numRows) {
+        string result="";
+        if(numRows==1)
+            return s;
+        int step1,step2;
+        int len=s.size();
+        for(int i=0;i<numRows;++i){
+            step1=(numRows-i-1)*2;
+            step2=(i)*2;
+            int pos=i;
+            if(pos<len)
+                result+=s.at(pos);
+            while(1){
+                pos+=step1;
+                if(pos>=len)
+                    break;
+                if(step1)
+                    result+=s.at(pos);
+                pos+=step2;
+                if(pos>=len)
+                    break;
+                if(step2)
+                    result+=s.at(pos);
+            }
+        }
+        return result;
+    }
+};
+//add the gap from column 1 i
+//https://leetcode.com/discuss/55208/if-you-are-confused-with-zigzag-pattern-come-and-see
+
+
+class Solution {
+public:
+    string convert(string s, int numRows) {
+        if(s.length()<=numRows||numRows==1)return s;
+        int d=(numRows<<1)-2;
+        string ans;
+        for(int i=0;i<s.length();i+=d)ans+=s[i];
+        int dx =numRows-2;
+        int firstmid=numRows-1;
+        while(dx>=0){
+            for(int i=firstmid;i-dx<s.length();i+=d){
+                ans+=s[i-dx];
+                if(dx!=0&&i+dx<s.length())
+                    ans+=s[i+dx];
+            }
+            dx--;
+        }
+        return ans;
+    }
+};
+//https://leetcode.com/discuss/94624/c-fast-solution
+
+public class Solution {
+public String convert(String s, int numRows) {
+    if(numRows<=1)return s;
+    StringBuilder[] sb=new StringBuilder[numRows];
+    for(int i=0;i<sb.length;i++){
+        sb[i]=new StringBuilder("");   //init every sb element **important step!!!!
+    }
+    int incre=1;
+    int index=0;
+    for(int i=0;i<s.length();i++){
+        sb[index].append(s.charAt(i));
+        if(index==0){incre=1;}
+        if(index==numRows-1){incre=-1;}
+        index+=incre;
+    }
+    String re="";
+    for(int i=0;i<sb.length;i++){
+        re+=sb[i];
+    }
+    return re.toString();
+}
+//https://leetcode.com/discuss/94364/java-solution-easy-and-clear-interesting-approach
