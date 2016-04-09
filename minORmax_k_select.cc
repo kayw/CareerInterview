@@ -3,6 +3,7 @@
 #include "practice_base/heapsort.hpp"
 template<typename T, typename Comp, int N>
 void heapSelect(T (&arr)[N], int k, std::vector<T>& kthVec) {
+  // todo only need k heap
   Heap<T, Comp, N> h(arr, N);
   for (int i = 0; i < k; ++i) {
     kthVec.push_back(h.popFront() );

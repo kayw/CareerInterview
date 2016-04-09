@@ -1,0 +1,221 @@
+//https://leetcode.com/discuss/37302/manacher-algorithm-based-java-solution-with-explanations
+public class Solution {
+    public String shortestPalindrome(String s) {
+        if(s.length()<2)
+            return s;
+        //first process the original string to make it one with odd number of chars
+        StringBuilder builder=new StringBuilder();
+        builder.append('#');
+        for(char c:s.toCharArray()){
+            builder.append(c);
+            builder.append('#');
+        }
+        String str=builder.toString();
+        //lens is the array storing the length of longest palindrome centered at position i
+        int[] lens=new int[str.length()];
+        int[] res=new int[2];
+        //idx is the center of the palindrome reaches the farthest along str
+        int idx=0;
+        //max is the edge of that longest palindrome
+        int max=1;
+        res[0]=idx;
+        res[1]=max;
+        for(int i=1;i<str.length();i++){
+            if(i<max){
+                lens[i]=Math.min(max-i,lens[2*idx-i]);
+            }
+            else
+                lens[i]=1;
+            while(i-lens[i]>=0&&i+lens[i]<str.length()&&
+                str.charAt(i-lens[i])==str.charAt(i+lens[i])){
+                    lens[i]+=1;
+            }
+            if(i+lens[i]>max){
+                max=i+lens[i];
+                idx=i;
+            }
+            //The res should be a palindrome starting at position 0 and having the biggest length
+            if(max-idx>res[1]-res[0]&&2*idx-max+1==0){
+                res[1]=max;
+                res[0]=idx;
+            }
+        }
+        StringBuilder result=new StringBuilder();
+        for(char c:str.substring(res[1]).toCharArray()){
+            if(c!='#')
+                result.append(c);
+        }
+        return result.reverse().append(s).toString();
+    }
+}
+
+//https://leetcode.com/discuss/36987/python-solution-kmp
+class Solution:
+# @param {string} s
+# @return {string}
+def shortestPalindrome(self, s):
+    A=s+"*"+s[::-1]
+    cont=[0]
+    for i in range(1,len(A)):
+        index=cont[i-1]
+        while(index>0 and A[index]!=A[i]):
+            index=cont[index-1]
+        cont.append(index+(1 if A[index]==A[i] else 0))
+    return s[cont[-1]:][::-1]+s
+
+KMP failure function
+aabba
+
+//https://leetcode.com/discuss/38608/4ms-c-solution-based-on-kmp-with-detailed-comments
+class Solution 
+{
+    // The entries of T are constructed so that if we have a match 
+    // starting at s[j] that fails when comparing s[j + i] with W[i], 
+    // then the next possible match will start at index (j + i - T[i]) 
+    // in s (that is, T[i] is the amount of "backtracking" we need to 
+    // do after a mismatch).
+    // W -- the pattern string which is searched for in s.
+    // T -- the backtrack table.
+    // m -- the length of W.
+    void BuildBackTrackTable(string &W, vector<int> &T, int m)
+    {
+        // To find T[i], we must discover a proper suffix of W[0,...,(i - 1)]
+        // which is also a proper prefix of W.
+        // If s[j] doesn't match W[0], we should jump to s[j + 1].
+        T[0] = -1;
+        if (m >= 2)
+        {
+            // There is no proper suffix of W[0, 1], so T[1] = 0.
+            T[1] = 0;
+
+            // Calculate T[i] for 2 <= i <= m - 1.
+            int pos = 2;
+            int cnd = 0; // the end character of the proper prefix
+            while (pos <= m - 1)
+            {
+                if (W[pos - 1] == W[cnd])
+                {
+                    // The new character is equal to the character right 
+                    // after the previous prefix, so we increase the 
+                    // proper prefix by 1 character.
+                    cnd++;
+                    T[pos] = cnd;
+                    pos++;
+                }
+                else if (cnd > 0)
+                {
+                    // The previous proper prefix can't be prolonged, so 
+                    // we fall back to previous proper prefix.
+                    cnd = T[cnd];
+                }
+                else
+                {
+                    // If cnd == 0, i.e., the minimum proper prefix still 
+                    // doesn't work, then set T[pos] to 0.
+                    T[pos] = 0;
+                    pos++;
+                }
+            }
+        }
+    }
+
+public:
+    string shortestPalindrome(string s) 
+    {
+        int len = s.length();
+        // If the string length is smaller than 2, the string 
+        // itself is a palindrome.
+        if (len < 2)
+        {
+            return s;
+        }
+
+        // To find the shortest palindrome, it is equivalent to 
+        // find the longest substring which is a prefix of s and 
+        // also a palindrome. This is essentially a string comparison  
+        // problem: given a substring, check whether its first half 
+        // is equal to its second half. 
+        // (1) If two halves are equal, we are done.
+        // (2) If not, we can shrink the substring and do the 
+        // string comparison again. Assume that subLen is the length 
+        // of the substring; s[i] is the first character in the first 
+        // half of the substring which is not equal to the corresponding 
+        // character s[subLen - 1 - i] in the second half of the substring.
+        // Then the next substring for the palindrome check is the 
+        // prefix of the current substring with length subLen - i + T[i], 
+        // where T[i] is the i-th entry in the backtrack table used 
+        // in the KMP algorithm.
+
+        // 1. Build the backtrack table for the first half of s.
+        vector<int> T(len/2);
+        string firstHalf = s.substr(0, len/2);
+        BuildBackTrackTable(firstHalf, T, len/2);
+
+        // 2. Keep checking whether the substring is a palindrome 
+        // until we find one. Initially the substring is the string 
+        // s itself.
+        int subLen = len;
+        int initialI = 0;
+        int initialJ = subLen - 1;
+        while (subLen > 1)
+        {
+            // Index of the first half of the substring.
+            int i = initialI; 
+            // Index of the second half of the substring.
+            int j = initialJ; 
+            bool isPalindrome = false;
+            while (i < j)
+            {
+                if (s[i] == s[j])
+                {
+                    if ((i + 1 == j) || (i + 2 == j))
+                    {
+                        // This is a palindrome.
+                        isPalindrome = true;
+                        break;
+                    }
+                    else
+                    {
+                        // Check next pair of characters.
+                        i++;
+                        j--;
+                    }
+                }
+                else
+                {
+                    subLen = subLen - i + T[i];
+                    // The first T[i] characters are the same, so we 
+                    // start the comparison from s[T[i]].
+                    if (i > 0)
+                    {
+                        initialI = T[i];
+                        initialJ = subLen - 1 - T[i];
+                    }
+                    else
+                    {
+                        initialI = 0;
+                        initialJ = subLen - 1;
+                    }
+
+                    break;
+                }
+            }
+
+            if (isPalindrome)
+            {
+                break;
+            }
+        }
+
+        if (subLen < len)
+        {
+            // The string s is not a palindrome and we need to add 
+            // characters in front of it.
+            string addedPrefix = s.substr(subLen);
+            reverse(addedPrefix.begin(), addedPrefix.end());
+            s = addedPrefix + s;
+        }
+
+        return s;
+    }
+};
