@@ -1,4 +1,6 @@
 //http://en.wikipedia.org/wiki/Josephus_problem
+//http://www.exploringbinary.com/powers-of-two-in-the-josephus-problem/
+//https://people.math.ethz.ch/~halorenz/publications/pdf/jos.pdf
 package career_interview
 
 func JosephProblem(n int, m int) int {
