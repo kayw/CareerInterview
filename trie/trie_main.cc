@@ -1,8 +1,9 @@
-#include "patricia_trie_codeproject.hpp"
 #include "nPatriciaTrie_codeproject.hpp"
-#include "simple_trie.hpp"
+#include "patricia_trie_codeproject.hpp"
 #include "simple-trie-googlecode.hpp"
-int main(int /*argc*/, char */*argv*/[]) {
+#include "simple_trie.hpp"
+int main(int /*argc*/, char* /*argv*/ [])
+{
   PatriciaTrie<char*, int> ptree;
   ptree.Insert("SOME", 2000);
   ptree.Insert("ABACUS", 2000);
@@ -28,3 +29,5 @@ int main(int /*argc*/, char */*argv*/[]) {
 #endif
   return 0;
 }
+
+// https://news.ycombinator.com/item?id=12914495

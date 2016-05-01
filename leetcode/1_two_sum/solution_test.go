@@ -29,6 +29,21 @@ func TestTwoSum(t *testing.T) {
 			"first values should be [-10001, 10001]",
 		)
 	}
+
+	nums = []int{2, 7, 11, 15}
+	targetIndice = twoSum(nums, 9)
+	if targetIndice[0] != 0 || targetIndice[1] != 1 {
+		t.Errorf(
+			"first values should be [2, 7]",
+		)
+	}
+	nums = []int{2, 15, 11, 7}
+	targetIndice = twoSum(nums, 9)
+	if targetIndice[0] != 0 || targetIndice[1] != 3 {
+		t.Errorf(
+			"first values should be [2, 7]",
+		)
+	}
 }
 
 func TestTwoSumSameValues(t *testing.T) {

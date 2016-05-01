@@ -6,22 +6,36 @@ import (
 	"sort"
 )
 
+type numberPair struct {
+	num,
+	index int
+}
+
+type byNumberPair []numberPair
+
+func (np byNumberPair) Len() int           { return len(np) }
+func (np byNumberPair) Swap(i, j int)      { np[i], np[j] = np[j], np[i] }
+func (np byNumberPair) Less(i, j int) bool { return np[i].num < np[j].num }
+
 func twoSum(nums []int, target int) []int {
-	numIndexMap := make(map[int]int)
+	numPairVector := make([]numberPair, len(nums))
 	for index, num := range nums {
-		numIndexMap[num] = index
+		numPairVector[index] = numberPair{
+			index: index,
+			num:   num,
+		}
 	}
-	sort.Ints(nums)
+	sort.Sort(byNumberPair(numPairVector))
 	i := 0
 	j := len(nums) - 1
 	var result []int
 	for i < j {
-		total := nums[i] + nums[j]
+		total := numPairVector[i].num + numPairVector[j].num
 		if total == target {
-			indexI := numIndexMap[nums[i]]
-			indexJ := numIndexMap[nums[j]]
+			indexI := numPairVector[i].index
+			indexJ := numPairVector[j].index
 			result = []int{indexI, indexJ}
-			fmt.Println("found nums", nums[i], nums[j])
+			fmt.Println("found nums", numPairVector[i].num, numPairVector[j].num)
 			break
 		} else if total < target {
 			i++

@@ -30,3 +30,5 @@ func (na *NumArray) sumRange(i, j int) int {
 	}
 	return na.sums[j] - subtract
 }
+
+// http://www.cnblogs.com/grandyang/p/4985506.html binary index tree
