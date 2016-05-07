@@ -36,7 +36,7 @@ func TestFourSumBasic(t *testing.T) {
 	if len(results) != 3 {
 		t.Errorf("%d is not the right length of 3", len(results))
 	}
-	results = fourSum([]int{}, 0)
+	results = fourSum([]int{}, 0) // zero test case
 	if len(results) != 0 {
 		t.Errorf("%d is not the right length of 0", len(results))
 	}

@@ -48,7 +48,7 @@ func fourSum(nums []int, target int) [][]int {
 						for _, t := range tmp {
 							fmt.Printf("%d ", t)
 						}
-						// result = append(result, tmp)
+						// result = append(result, tmp) copy slice
 						result = append(result, append([]int(nil), tmp...))
 						/*
 							for _, res := range result {
